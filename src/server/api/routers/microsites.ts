@@ -13,12 +13,27 @@ export const micrositesRouter = createTRPCRouter({
       return microsite
     }),
 
-  getFeatured: publicProcedure.query(async ({ ctx }) => {
-    const microsites = await ctx.db.microsite.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 9
-    })
+  getFeatured: publicProcedure
+    .input(
+      z.object({ limit: z.number().min(1).default(9), cursor: z.string().nullish() })
+    )
+    .query(async ({ ctx, input }) => {
+      const { limit, cursor } = input
+      const microsites = await ctx.db.microsite.findMany({
+        orderBy: { updatedAt: "desc" },
+        take: limit + 1,
+        ...(cursor && { skip: 1, cursor: { id: cursor } })
+      })
 
-    return microsites
-  })
+      let nextCursor: string | undefined = undefined
+      if (microsites.length > limit) {
+        const nextMicrosite = microsites.pop()
+        nextCursor = nextMicrosite!.id
+      }
+
+      return {
+        microsites,
+        nextCursor
+      }
+    })
 })
