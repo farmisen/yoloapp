@@ -1,12 +1,12 @@
-import Link from "next/link";
+import Link from "next/link"
 
-import { LatestPost } from "~/app/_components/post";
-import { api, HydrateClient } from "~/trpc/server";
+import { LatestPost } from "~/app/_components/post"
+import { HydrateClient, api } from "~/trpc/server"
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
+  const hello = await api.post.hello({ text: "from tRPC" })
 
-  void api.post.getLatest.prefetch();
+  void api.post.getLatest.prefetch()
 
   return (
     <HydrateClient>
@@ -19,23 +19,21 @@ export default async function Home() {
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
               href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
+              target="_blank">
               <h3 className="text-2xl font-bold">First Steps →</h3>
               <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
+                Just the basics - Everything you need to know to set up your database
+                and authentication.
               </div>
             </Link>
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
               href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
+              target="_blank">
               <h3 className="text-2xl font-bold">Documentation →</h3>
               <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
+                Learn more about Create T3 App, the libraries it uses, and how to deploy
+                it.
               </div>
             </Link>
           </div>
@@ -49,5 +47,5 @@ export default async function Home() {
         </div>
       </main>
     </HydrateClient>
-  );
+  )
 }
