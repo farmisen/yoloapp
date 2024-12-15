@@ -13,7 +13,7 @@ const MicrositePage = async ({ params }: { params: Promise<{ slug: string }> }) 
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div>
       <h1 className="text-3xl font-bold mb-4">{microsite.name}</h1>
       <div className="aspect-video relative mb-4 rounded-lg overflow-hidden">
         <Image
