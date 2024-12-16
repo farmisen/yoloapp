@@ -1,29 +1,67 @@
-# Create T3 App
+# YoloApp
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A microsite generator application.
 
-## What's next? How do I make an app with this?
+## Requirements
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- Node.js 20 (LTS)
+- pdftocairo (for PDF processing)
+- pnpm (recommended) or npm
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### Installing pdftocairo
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- On MacOS: `brew install poppler`
+- On Ubuntu/Debian: `sudo apt-get install poppler-utils`
+- On Windows: Install via [poppler releases](http://blog.alivate.com.au/poppler-windows/)
 
-## Learn More
+## Getting Started
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/farmisen/yoloapp.git
+   cd yoloapp
+   ```
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+3. Set up your environment:
+   ```bash
+   cp .env.example .env
+   ```
 
-## How do I deploy this?
+4. Push the database schema:
+   ```bash
+   pnpm prisma db push
+   ```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+5. Start the development server:
+   ```bash
+   pnpm dev
+   ```
+
+6. (Optional) Start Prisma Studio to manage your database:
+   ```bash
+   pnpm prisma studio
+   ```
+
+## Development
+
+### Useful Commands
+
+- `pnpm lint` - Run ESLint
+- `pnpm format` - Format code with Prettier
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+
+### Database Management
+
+- `pnpm prisma generate` - Generate Prisma Client
+- `pnpm prisma db push` - Push schema changes to database
+- `pnpm prisma studio` - Open Prisma Studio
+
+## License
+
+[MIT](LICENSE)
