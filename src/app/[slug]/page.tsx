@@ -1,9 +1,17 @@
+import { Pencil } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { notFound } from "next/navigation"
+import { type FC } from "react"
 
+import { Button } from "~/components/ui/button"
 import { api } from "~/trpc/server"
 
-const MicrositePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+type MicrositePageProps = {
+  params: Promise<{ slug: string }>
+}
+
+const MicrositePage: FC<MicrositePageProps> = async ({ params }) => {
   const { slug } = await params
 
   const microsite = await api.microsites.getBySlug({ slug })
@@ -14,6 +22,12 @@ const MicrositePage = async ({ params }: { params: Promise<{ slug: string }> }) 
 
   return (
     <div>
+      <Button variant="outline" className="mb-4" asChild>
+        <Link href={`/${microsite.slug}/edit`}>
+          <Pencil />
+          Edit Restaurant
+        </Link>
+      </Button>
       <h1 className="text-3xl font-bold mb-4">{microsite.name}</h1>
       <div className="aspect-video relative mb-4 rounded-lg overflow-hidden">
         <Image

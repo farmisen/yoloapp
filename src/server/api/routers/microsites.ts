@@ -7,8 +7,22 @@ export const micrositesRouter = createTRPCRouter({
     .input(z.object({ slug: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
       const microsite = await ctx.db.microsite.findUnique({
-        where: { slug: input.slug }
+        where: { slug: input.slug },
+        include: {
+          menu: true
+        }
       })
+
+      if (microsite?.menu) {
+        return {
+          ...microsite,
+          menu: {
+            ...microsite.menu,
+            // Convert Buffer to base64 string
+            data: microsite.menu.data.toString("base64")
+          }
+        }
+      }
 
       return microsite
     }),
@@ -35,5 +49,86 @@ export const micrositesRouter = createTRPCRouter({
         microsites,
         nextCursor
       }
+    }),
+
+  createOrUpdate: publicProcedure
+    .input(
+      z.object({
+        id: z.string().optional(),
+        name: z.string().min(1),
+        slug: z.string().min(1),
+        cuisine: z.string().min(1),
+        phone: z.string().optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...microsite } = input
+      return id
+        ? ctx.db.microsite.update({
+            where: { id },
+            data: microsite
+          })
+        : ctx.db.microsite.create({
+            data: microsite
+          })
+    }),
+
+  uploadMenu: publicProcedure
+    .input(
+      z.object({
+        micrositeId: z.string(),
+        file: z.object({
+          data: z.string(),
+          mimeType: z.string()
+        })
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Extract the base64 data from the DataURL
+      // and convert it to a Buffer
+      const base64Data = input.file.data.split(";base64,").pop()
+      if (!base64Data) {
+        throw new Error("Invalid file data")
+      }
+      const fileBuffer = Buffer.from(base64Data, "base64")
+
+      const result = await ctx.db.menu.upsert({
+        where: {
+          micrositeId: input.micrositeId
+        },
+        update: {
+          data: fileBuffer,
+          mimeType: input.file.mimeType
+        },
+        create: {
+          micrositeId: input.micrositeId,
+          data: fileBuffer,
+          mimeType: input.file.mimeType
+        }
+      })
+
+      return {
+        id: result.id,
+        micrositeId: result.micrositeId,
+        mimeType: result.mimeType,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt
+      }
+    }),
+
+  deleteMenu: publicProcedure
+    .input(
+      z.object({
+        micrositeId: z.string()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.menu.delete({
+        where: {
+          micrositeId: input.micrositeId
+        }
+      })
+
+      return {}
     })
 })
