@@ -4,6 +4,7 @@ import Image from "next/image"
 import { type FC } from "react"
 
 import { Input } from "~/components/ui/input"
+import { objectUrlMimeType } from "~/lib/utils"
 
 type FileUploadProps = {
   accept?: string
@@ -20,8 +21,7 @@ const FileUpload: FC<FileUploadProps> = ({
   previewUrl,
   onChange
 }: FileUploadProps) => {
-  const mimetype =
-    value?.type ?? previewUrl?.split(";base64,").shift()?.split(":").pop()
+  const mimetype = value?.type ?? (previewUrl ? objectUrlMimeType(previewUrl) : null)
 
   return (
     <div className="space-y-2">

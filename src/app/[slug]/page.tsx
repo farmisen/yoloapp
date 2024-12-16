@@ -4,6 +4,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { type FC } from "react"
 
+import FileRenderer from "~/app/_components/FileRenderer"
 import { Button } from "~/components/ui/button"
 import { api } from "~/trpc/server"
 
@@ -29,13 +30,24 @@ const MicrositePage: FC<MicrositePageProps> = async ({ params }) => {
         </Link>
       </Button>
       <h1 className="text-3xl font-bold mb-4">{microsite.name}</h1>
-      <div className="aspect-video relative mb-4 rounded-lg overflow-hidden">
-        <Image
-          src="/placeholder.webp"
-          alt={microsite.name}
-          fill
-          className="object-cover"
-        />
+      <div className="flex gap-4 mb-4">
+        <div className="aspect-video relative rounded-lg overflow-hidden flex-1">
+          <Image
+            src="/placeholder.webp"
+            alt={microsite.name}
+            fill
+            className="object-cover"
+          />
+        </div>
+        {microsite.menu && (
+          <div className="aspect-video   rounded-lg overflow-hidden flex-1">
+            <FileRenderer
+              mimeType={microsite.menu.mimeType}
+              base64Data={String(microsite.menu.data)}
+              alt="Menu"
+            />
+          </div>
+        )}
       </div>
       <div className="space-y-4">
         <p className="text-lg">
