@@ -24,7 +24,7 @@ const MicrositePage: FC<MicrositePageProps> = async ({ params }) => {
   return (
     <div>
       <Button variant="outline" className="mb-4" asChild>
-        <Link href={`/${microsite.slug}/edit`}>
+        <Link href={`/microsites/${microsite.slug}`}>
           <Pencil />
           Edit Restaurant
         </Link>

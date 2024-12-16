@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, useRouter } from "next/navigation"
 import { type FC, use, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -62,6 +62,8 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
   const [menuDeleted, setMenuDeleted] = useState<boolean>(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
+  const router = useRouter()
+
   const handleFileChange = (
     file: File | null,
     field: { onChange: (value: File | null) => void },
@@ -87,7 +89,10 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
 
   const onSubmit = async (data: FormData) => {
     // update microsite
-    const microsite = await mutation.mutateAsync({ ...data, id: query.data!.id })
+    const microsite = await mutation.mutateAsync({
+      ...data,
+      ...(query.data && { id: query.data.id })
+    })
 
     if (menuFile) {
       const reader = new FileReader()
@@ -113,6 +118,13 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
         micrositeId: microsite.id
       })
     }
+
+    console.log("mutation:", mutation.status)
+    console.log("menuUploadMutation:", menuUploadMutation.status)
+
+    if (!query.data && !(mutation.error || menuUploadMutation.error)) {
+      router.push(`/${microsite.slug}`)
+    }
   }
 
   const form = useForm<FormData>({
@@ -137,7 +149,16 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
       const dataUrl = menu ? `data:${menu.mimeType};base64,${String(menu.data)}` : null
       setPreviewUrl(dataUrl)
     }
-  }, [query.isSuccess, query.data, form])
+
+    if (query.isSuccess && !query.data) {
+      form.reset({
+        name: "L'auberge rouge",
+        slug: "auberge-rouge",
+        cuisine: "French",
+        phone: "555 034 5512"
+      })
+    }
+  }, [query.isSuccess, query.data, form, slug])
 
   // Cleanup when unmounting or when a new file is selected
   useEffect(() => {
@@ -148,23 +169,21 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
     }
   }, [previewUrl])
 
-  if (query.isSuccess && !query.data) {
-    notFound()
-  }
-
-  if (query.isLoading) {
-    return <div>Loading...</div>
-  }
+  const creating = !query.data
+  const title = creating ? "Create Restaurant" : "Edit Restaurant"
+  const submitLabel = creating ? "Create Restaurant" : "Save Changes"
 
   return (
     <div>
       <Button variant="outline" className="mb-4" asChild>
-        <Link href={`/${query.data!.slug}`}>
-          <ChevronLeft />
-          Back to Details
-        </Link>
+        {!creating && (
+          <Link href={`/${query.data!.slug}`}>
+            <ChevronLeft />
+            Back to Details
+          </Link>
+        )}
       </Button>
-      <h1 className="text-3xl font-bold mb-8">Edit Restaurant</h1>
+      <h1 className="text-3xl font-bold mb-8">{title}</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-8">
@@ -274,7 +293,7 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
             <Button
               type="submit"
               disabled={mutation.isPending || menuUploadMutation.isPending}>
-              Save Changes
+              {submitLabel}
             </Button>
           </div>
         </form>
