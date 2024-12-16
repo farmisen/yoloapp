@@ -79,11 +79,9 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
     setMenuDeleted(false)
     field.onChange(file)
 
-    if (file?.type.startsWith("image/")) {
+    if (file) {
       const url = URL.createObjectURL(file)
       setPreviewUrl(url)
-    } else {
-      setPreviewUrl(null)
     }
   }
 

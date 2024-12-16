@@ -1,3 +1,5 @@
+import { Viewer, Worker } from "@react-pdf-viewer/core"
+import "@react-pdf-viewer/core/lib/styles/index.css"
 import Image from "next/image"
 import { type FC } from "react"
 
@@ -18,6 +20,9 @@ const FileUpload: FC<FileUploadProps> = ({
   previewUrl,
   onChange
 }: FileUploadProps) => {
+  const mimetype =
+    value?.type ?? previewUrl?.split(";base64,").shift()?.split(":").pop()
+
   return (
     <div className="space-y-2">
       <Input
@@ -42,7 +47,8 @@ const FileUpload: FC<FileUploadProps> = ({
       {value && (
         <p className="text-sm text-muted-foreground">Selected file: {value.name}</p>
       )}
-      {previewUrl && (
+
+      {previewUrl && mimetype?.startsWith("image/") && (
         <div className="mt-2">
           <p className="text-sm text-muted-foreground mb-1">Preview:</p>
           <Image
@@ -55,8 +61,10 @@ const FileUpload: FC<FileUploadProps> = ({
           />
         </div>
       )}
-      {value?.type === "application/pdf" && (
-        <p className="text-sm text-muted-foreground mt-2">PDF preview not available</p>
+      {previewUrl && mimetype === "application/pdf" && (
+        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+          <Viewer fileUrl={previewUrl} />
+        </Worker>
       )}
     </div>
   )
