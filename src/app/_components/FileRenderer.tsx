@@ -25,7 +25,7 @@ const FileRenderer: FC<FileRendererProps> = async ({ mimeType, base64Data, alt }
 
   if (objectUrl) {
     return (
-      <div className="relative w-full h-full">
+      <div className="relative h-full w-full">
         <Image alt={alt} src={objectUrl} fill className="object-cover" />
       </div>
     )

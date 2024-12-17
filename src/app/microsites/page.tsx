@@ -44,9 +44,9 @@ const NewMicrositePage = () => {
   const takenSlug = slug.length > 0 && query.status === "success" && query.data
 
   return (
-    <div className="w-[420px] m-auto pt-40">
+    <div className="m-auto w-[420px] pt-40">
       <Label>Choose you microsite URL</Label>
-      <div className="flex gap-2 ">
+      <div className="flex gap-2">
         <PrefixedInput
           prefix="https://yoloapp.com/"
           placeholder="your-restaurant-name"
@@ -63,19 +63,19 @@ const NewMicrositePage = () => {
       </div>
       {validSlug && (
         <div className="flex gap-1">
-          <ThumbsUp className="text-green-400 w-4" />
+          <ThumbsUp className="w-4 text-green-400" />
           <span className="text-green-400">{`${slug} is available`}</span>
         </div>
       )}
       {takenSlug && (
         <div className="flex gap-1">
-          <TriangleAlert className="text-destructive w-4" />
+          <TriangleAlert className="w-4 text-destructive" />
           <span className="text-destructive">{`${slug} is already taken`}</span>
         </div>
       )}
       {validationError && (
         <div className="flex gap-1">
-          <TriangleAlert className="text-destructive w-4" />
+          <TriangleAlert className="w-4 text-destructive" />
           <span className="text-destructive">{validationError}</span>
         </div>
       )}

@@ -98,7 +98,7 @@ async function main() {
   }
 
   // Generate mock data for ~30 restaurants
-  const micrositeData = Array.from({ length: 30 }, () => {
+  const micrositeData = Array.from({ length: 40 }, () => {
     const cuisine = cuisines[Math.floor(Math.random() * cuisines.length)]!
     const name = generateRestaurantName(cuisine)
     const phone = faker.phone.number({ style: "national" })
@@ -125,6 +125,37 @@ async function main() {
   const uniqueMicrositeData = Array.from(
     new Map(micrositeData.map((item) => [item.email, item])).values()
   )
+
+  // If we don't have enough unique entries, generate more
+  while (uniqueMicrositeData.length < 30) {
+    const cuisine = cuisines[Math.floor(Math.random() * cuisines.length)]!
+    const name = generateRestaurantName(cuisine)
+    const phone = faker.phone.number({ style: "national" })
+    const randomSuffix = Math.floor(Math.random() * 1000)
+    const slug = `${name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")}-${randomSuffix}`
+
+    const newEntry = {
+      name,
+      phone,
+      email: `${slug}@example.com`,
+      cuisine,
+      createdAt: new Date(
+        Date.now() - Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 365 * 2)
+      ),
+      updatedAt: new Date(
+        Date.now() - Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 30)
+      ),
+      slug
+    }
+
+    // Only add if it's unique
+    if (!uniqueMicrositeData.some((item) => item.email === newEntry.email)) {
+      uniqueMicrositeData.push(newEntry)
+    }
+  }
 
   // Upsert data into the Microsite table
   for (const microsite of uniqueMicrositeData) {

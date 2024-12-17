@@ -29,9 +29,9 @@ const MicrositePage: FC<MicrositePageProps> = async ({ params }) => {
           Edit Restaurant
         </Link>
       </Button>
-      <h1 className="text-3xl font-bold mb-4">{microsite.name}</h1>
-      <div className="flex gap-4 mb-4">
-        <div className="aspect-video relative rounded-lg overflow-hidden flex-1">
+      <h1 className="mb-4 text-3xl font-bold">{microsite.name}</h1>
+      <div className="mb-4 flex gap-4">
+        <div className="relative aspect-video flex-1 overflow-hidden rounded-lg">
           <Image
             src="/placeholder.webp"
             alt={microsite.name}
@@ -40,7 +40,7 @@ const MicrositePage: FC<MicrositePageProps> = async ({ params }) => {
           />
         </div>
         {microsite.menu && (
-          <div className="aspect-video   rounded-lg overflow-hidden flex-1">
+          <div className="aspect-video flex-1 overflow-hidden rounded-lg">
             <FileRenderer
               mimeType={microsite.menu.mimeType}
               base64Data={String(microsite.menu.data)}

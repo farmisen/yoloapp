@@ -5,6 +5,14 @@
 import "./src/env.js"
 
 /** @type {import("next").NextConfig} */
-const config = {}
+const config = {
+  webpack: (config) => {
+    config.externals.push({
+      canvas: "commonjs canvas"
+    })
+    return config
+  },
+  output: "standalone"
+}
 
 export default config

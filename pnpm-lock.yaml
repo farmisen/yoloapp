@@ -29,6 +29,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.50.0
         version: 5.62.7(react@18.3.1)
+      '@trivago/prettier-plugin-sort-imports':
+        specifier: ^5.2.0
+        version: 5.2.0(prettier@3.4.2)
       '@trpc/client':
         specifier: ^11.0.0-rc.446
         version: 11.0.0-rc.660(@trpc/server@11.0.0-rc.660(typescript@5.7.2))(typescript@5.7.2)
@@ -87,9 +90,6 @@ importers:
       '@faker-js/faker':
         specifier: ^9.3.0
         version: 9.3.0
-      '@trivago/prettier-plugin-sort-imports':
-        specifier: ^5.2.0
-        version: 5.2.0(prettier@3.4.2)
       '@types/eslint':
         specifier: ^8.56.10
         version: 8.56.12

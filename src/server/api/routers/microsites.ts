@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc"
@@ -33,6 +34,7 @@ export const micrositesRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { limit, cursor } = input
+
       const microsites = await ctx.db.microsite.findMany({
         orderBy: { updatedAt: "desc" },
         take: limit + 1,
@@ -63,7 +65,7 @@ export const micrositesRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { id, ...microsite } = input
-      return id
+      const result = id
         ? ctx.db.microsite.update({
             where: { id },
             data: microsite
@@ -71,12 +73,17 @@ export const micrositesRouter = createTRPCRouter({
         : ctx.db.microsite.create({
             data: microsite
           })
+      revalidatePath(`/microsites/${microsite.slug}`)
+      revalidatePath(`/${microsite.slug}`)
+
+      return result
     }),
 
   uploadMenu: publicProcedure
     .input(
       z.object({
         micrositeId: z.string(),
+        micrositeSlug: z.string(),
         file: z.object({
           data: z.string(),
           mimeType: z.string()
@@ -107,6 +114,9 @@ export const micrositesRouter = createTRPCRouter({
         }
       })
 
+      revalidatePath(`/microsites/${input.micrositeSlug}`)
+      revalidatePath(`/${input.micrositeSlug}`)
+
       return {
         id: result.id,
         micrositeId: result.micrositeId,
@@ -119,7 +129,8 @@ export const micrositesRouter = createTRPCRouter({
   deleteMenu: publicProcedure
     .input(
       z.object({
-        micrositeId: z.string()
+        micrositeId: z.string(),
+        micrositeSlug: z.string()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -128,6 +139,9 @@ export const micrositesRouter = createTRPCRouter({
           micrositeId: input.micrositeId
         }
       })
+
+      revalidatePath(`/microsites/${input.micrositeSlug}`)
+      revalidatePath(`/${input.micrositeSlug}`)
 
       return {}
     })

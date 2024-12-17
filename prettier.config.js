@@ -1,4 +1,4 @@
-/** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions & import('@trivago/prettier-plugin-sort-imports').PluginOptions} */
+/** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions } */
 export default {
   printWidth: 88,
   tabWidth: 2,

@@ -50,13 +50,13 @@ const FileUpload: FC<FileUploadProps> = ({
 
       {previewUrl && mimetype?.startsWith("image/") && (
         <div className="mt-2">
-          <p className="text-sm text-muted-foreground mb-1">Preview:</p>
+          <p className="mb-1 text-sm text-muted-foreground">Preview:</p>
           <Image
             src={previewUrl}
             alt="File preview"
             width={300}
             height={300}
-            className="max-h-48 object-contain border rounded-md"
+            className="max-h-48 rounded-md border object-contain"
             style={{ width: "auto", height: "auto" }}
           />
         </div>

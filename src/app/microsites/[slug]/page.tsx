@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
-import { notFound, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { type FC, use, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -61,7 +61,7 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
   const [menuFile, setMenuFile] = useState<File | null>(null)
   const [menuDeleted, setMenuDeleted] = useState<boolean>(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-
+  const [backToDetailsSlug, setBackToDetailsSlug] = useState<string | null>(null)
   const router = useRouter()
 
   const handleFileChange = (
@@ -106,6 +106,7 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
 
       await menuUploadMutation.mutateAsync({
         micrositeId: microsite.id,
+        micrositeSlug: microsite.slug,
         file: {
           data: fileData as string,
           mimeType: menuFile.type
@@ -115,12 +116,13 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
 
     if (menuDeleted) {
       await menuDeleteMutation.mutateAsync({
-        micrositeId: microsite.id
+        micrositeId: microsite.id,
+        micrositeSlug: microsite.slug
       })
     }
 
-    console.log("mutation:", mutation.status)
-    console.log("menuUploadMutation:", menuUploadMutation.status)
+    // update slug to redirect back to details page
+    setBackToDetailsSlug(microsite.slug)
 
     if (!query.data && !(mutation.error || menuUploadMutation.error)) {
       router.push(`/${microsite.slug}`)
@@ -148,14 +150,16 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
       form.reset(formData)
       const dataUrl = menu ? `data:${menu.mimeType};base64,${String(menu.data)}` : null
       setPreviewUrl(dataUrl)
+      // set slug to redirect back to details page
+      setBackToDetailsSlug(query.data.slug)
     }
 
     if (query.isSuccess && !query.data) {
       form.reset({
-        name: "L'auberge rouge",
-        slug: "auberge-rouge",
-        cuisine: "French",
-        phone: "555 034 5512"
+        name: "",
+        slug,
+        cuisine: "",
+        phone: ""
       })
     }
   }, [query.isSuccess, query.data, form, slug])
@@ -176,14 +180,14 @@ const EditMicrositePage: FC<EditMicrositePageProps> = ({ params }) => {
   return (
     <div>
       <Button variant="outline" className="mb-4" asChild>
-        {!creating && (
-          <Link href={`/${query.data!.slug}`}>
+        {backToDetailsSlug && (
+          <Link href={`/${backToDetailsSlug}`}>
             <ChevronLeft />
             Back to Details
           </Link>
         )}
       </Button>
-      <h1 className="text-3xl font-bold mb-8">{title}</h1>
+      <h1 className="mb-8 text-3xl font-bold">{title}</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-8">
